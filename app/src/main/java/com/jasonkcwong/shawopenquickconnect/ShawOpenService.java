@@ -1,8 +1,14 @@
 package com.jasonkcwong.shawopenquickconnect;
 
 import android.app.Service;
+import android.content.Context;
 import android.content.Intent;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
+import android.net.wifi.WifiInfo;
+import android.net.wifi.WifiManager;
 import android.os.IBinder;
+import android.text.TextUtils;
 import android.util.Log;
 import android.widget.Toast;
 
@@ -32,7 +38,7 @@ public class ShawOpenService extends Service{
         pass = intent.getStringExtra("pass");
 
         Toast.makeText(this,email + pass ,Toast.LENGTH_LONG).show();
-
+        //Log.v("Current SSID", getCurrentSsid(this));
 
         new Thread(new Runnable(){
             public void run() {
@@ -61,5 +67,18 @@ public class ShawOpenService extends Service{
     public void onDestroy() {
         super.onDestroy();
         Toast.makeText(this,"Service is stopped" ,Toast.LENGTH_LONG).show();
+    }
+    public static String getCurrentSsid(Context context) {
+        String ssid = null;
+        ConnectivityManager connManager = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
+        NetworkInfo networkInfo = connManager.getNetworkInfo(ConnectivityManager.TYPE_WIFI);
+        if (networkInfo.isConnected()) {
+            final WifiManager wifiManager = (WifiManager) context.getSystemService(Context.WIFI_SERVICE);
+            final WifiInfo connectionInfo = wifiManager.getConnectionInfo();
+            if (connectionInfo != null && !TextUtils.isEmpty(connectionInfo.getSSID())) {
+                ssid = connectionInfo.getSSID();
+            }
+        }
+        return ssid;
     }
 }
