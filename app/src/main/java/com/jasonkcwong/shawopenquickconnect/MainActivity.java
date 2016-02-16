@@ -4,10 +4,12 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.EditText;
+import android.widget.Toast;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -46,7 +48,20 @@ public class MainActivity extends AppCompatActivity {
         return super.onOptionsItemSelected(item);
     }
     public void startService(View v) {
-        Intent i = new Intent(this, ShawOpenService.class);
-        startService(i);
+        if (emailEditText.getText().toString().matches("") || passEditText.getText().toString().matches("")){
+            Toast.makeText(this, "Cannot start service due to missing fields", Toast.LENGTH_LONG).show();
+        } else {
+            Intent i = new Intent(this, ShawOpenService.class);
+            Bundle extras = new Bundle();
+            String email = emailEditText.getText().toString();
+            String pass = passEditText.getText().toString();
+            Log.v("email", email);
+            extras.putString("email", email);
+            extras.putString("pass", pass);
+            i.putExtras(extras);
+
+            startService(i);
+//        ]
+        }
     }
 }
