@@ -19,6 +19,7 @@ public class MainActivity extends AppCompatActivity {
 
     private EditText emailEditText;
     private EditText passEditText;
+    private Boolean isStarted;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -29,6 +30,7 @@ public class MainActivity extends AppCompatActivity {
         emailEditText = (EditText) findViewById(R.id.emailEditText);
         passEditText = (EditText) findViewById(R.id.passEditText);
         setupUI(findViewById(R.id.parent));
+        isStarted = false;
     }
 
     @Override
@@ -55,7 +57,10 @@ public class MainActivity extends AppCompatActivity {
 
     public static void hideSoftKeyboard(Activity activity) {
         InputMethodManager inputMethodManager = (InputMethodManager)  activity.getSystemService(Activity.INPUT_METHOD_SERVICE);
-        inputMethodManager.hideSoftInputFromWindow(activity.getCurrentFocus().getWindowToken(), 0);
+        if (activity.getCurrentFocus() != null){
+            inputMethodManager.hideSoftInputFromWindow(activity.getCurrentFocus().getWindowToken(), 0);
+        }
+
     }
 
     public void setupUI(View view) {
@@ -83,17 +88,21 @@ public class MainActivity extends AppCompatActivity {
         if (emailEditText.getText().toString().matches("") || passEditText.getText().toString().matches("")){
             Toast.makeText(this, "Cannot start service due to missing fields", Toast.LENGTH_LONG).show();
         } else {
-            Intent i = new Intent(this, ShawOpenService.class);
-            Bundle extras = new Bundle();
-            String email = emailEditText.getText().toString();
-            String pass = passEditText.getText().toString();
-            Log.v("email", email);
-            extras.putString("email", email);
-            extras.putString("pass", pass);
-            i.putExtras(extras);
+            if (!isStarted){
+                hideSoftKeyboard(MainActivity.this);
+                Intent i = new Intent(this, ShawOpenService.class);
+                Bundle extras = new Bundle();
+                String email = emailEditText.getText().toString();
+                String pass = passEditText.getText().toString();
+                Log.v("email", email);
+                extras.putString("email", email);
+                extras.putString("pass", pass);
+                i.putExtras(extras);
 
-            startService(i);
-//        ]
+                startService(i);
+                isStarted = true;
+            }
+
         }
     }
 }

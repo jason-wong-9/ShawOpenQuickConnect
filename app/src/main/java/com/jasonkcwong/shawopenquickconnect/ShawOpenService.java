@@ -12,12 +12,16 @@ import android.text.TextUtils;
 import android.util.Log;
 import android.widget.Toast;
 
+import java.util.concurrent.Executor;
+import java.util.concurrent.Executors;
+
 /**
  * Created by jason on 16-02-15.
  */
 public class ShawOpenService extends Service{
     private String email;
     private String pass;
+    private Boolean isRunning;
     @Override
     public IBinder onBind(Intent intent) {
 
@@ -27,7 +31,7 @@ public class ShawOpenService extends Service{
     @Override
     public void onCreate() {
         super.onCreate();
-
+        isRunning = false;
         //Toast.makeText(this,"Service is created" ,Toast.LENGTH_LONG).show();
     }
 
@@ -39,25 +43,46 @@ public class ShawOpenService extends Service{
 
         Toast.makeText(this,email + pass ,Toast.LENGTH_LONG).show();
         //Log.v("Current SSID", getCurrentSsid(this));
+        if (!isRunning){
+            Executor executor = Executors.newSingleThreadExecutor();
+            executor.execute(new Runnable() {
+                public void run() {
+                    isRunning = true;
+                    while(isRunning)
+                    {
+                        try {
+                            Thread.sleep(5000);
 
-        new Thread(new Runnable(){
-            public void run() {
-                // TODO Auto-generated method stub
-                while(true)
-                {
-                    try {
-                        Thread.sleep(5000);
 
+                        } catch (InterruptedException e) {
+                            e.printStackTrace();
+                        }
 
-                    } catch (InterruptedException e) {
-                        e.printStackTrace();
+                        //REST OF CODE HERE//
+                        Log.v("Timer", "Every five seconds");
                     }
-                    //REST OF CODE HERE//
-                    Log.v("Timer", "Every five seconds");
                 }
+            });
+        }
 
-            }
-        }).start();
+//        new Thread(new Runnable(){
+//            public void run() {
+//                // TODO Auto-generated method stub
+//                while(true)
+//                {
+//                    try {
+//                        Thread.sleep(5000);
+//
+//
+//                    } catch (InterruptedException e) {
+//                        e.printStackTrace();
+//                    }
+//                    //REST OF CODE HERE//
+//                    Log.v("Timer", "Every five seconds");
+//                }
+//
+//            }
+//        }).start();
 
         return super.onStartCommand(intent, flags, startId);
 
@@ -67,6 +92,7 @@ public class ShawOpenService extends Service{
     public void onDestroy() {
         super.onDestroy();
         Toast.makeText(this,"Service is stopped" ,Toast.LENGTH_LONG).show();
+        isRunning = false;
     }
     public static String getCurrentSsid(Context context) {
         String ssid = null;
