@@ -3,6 +3,7 @@ package com.jasonkcwong.shawopenquickconnect;
 import android.app.Service;
 import android.content.Intent;
 import android.os.IBinder;
+import android.util.Log;
 import android.widget.Toast;
 
 /**
@@ -21,8 +22,7 @@ public class ShawOpenService extends Service{
     public void onCreate() {
         super.onCreate();
 
-        Toast.makeText(this,"Service is created" ,Toast.LENGTH_LONG).show();
-
+        //Toast.makeText(this,"Service is created" ,Toast.LENGTH_LONG).show();
     }
 
     @Override
@@ -30,7 +30,29 @@ public class ShawOpenService extends Service{
         //Started
         email = intent.getStringExtra("email");
         pass = intent.getStringExtra("pass");
+
         Toast.makeText(this,email + pass ,Toast.LENGTH_LONG).show();
+
+
+        new Thread(new Runnable(){
+            public void run() {
+                // TODO Auto-generated method stub
+                while(true)
+                {
+                    try {
+                        Thread.sleep(5000);
+
+
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
+                    //REST OF CODE HERE//
+                    Log.v("Timer", "Every five seconds");
+                }
+
+            }
+        }).start();
+
         return super.onStartCommand(intent, flags, startId);
 
     }
