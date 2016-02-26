@@ -1,14 +1,10 @@
 package com.jasonkcwong.shawopenquickconnect;
 
 import android.app.Service;
-import android.content.Context;
 import android.content.Intent;
-import android.net.ConnectivityManager;
-import android.net.NetworkInfo;
-import android.net.wifi.WifiInfo;
+import android.content.IntentFilter;
 import android.net.wifi.WifiManager;
 import android.os.IBinder;
-import android.text.TextUtils;
 import android.util.Log;
 import android.widget.Toast;
 
@@ -22,6 +18,8 @@ public class ShawOpenService extends Service{
     private String email;
     private String pass;
     private Boolean isRunning;
+    private Receiver receiver;
+
     @Override
     public IBinder onBind(Intent intent) {
 
@@ -32,6 +30,11 @@ public class ShawOpenService extends Service{
     public void onCreate() {
         super.onCreate();
         isRunning = false;
+        receiver = new Receiver();
+
+        IntentFilter intentFilter = new IntentFilter();
+        intentFilter.addAction(WifiManager.SUPPLICANT_STATE_CHANGED_ACTION);
+        this.registerReceiver(receiver, intentFilter);
         //Toast.makeText(this,"Service is created" ,Toast.LENGTH_LONG).show();
     }
 
@@ -60,29 +63,11 @@ public class ShawOpenService extends Service{
 
                         //REST OF CODE HERE//
                         Log.v("Timer", "Every five seconds");
+
                     }
                 }
             });
         }
-
-//        new Thread(new Runnable(){
-//            public void run() {
-//                // TODO Auto-generated method stub
-//                while(true)
-//                {
-//                    try {
-//                        Thread.sleep(5000);
-//
-//
-//                    } catch (InterruptedException e) {
-//                        e.printStackTrace();
-//                    }
-//                    //REST OF CODE HERE//
-//                    Log.v("Timer", "Every five seconds");
-//                }
-//
-//            }
-//        }).start();
 
         return super.onStartCommand(intent, flags, startId);
 
@@ -94,17 +79,5 @@ public class ShawOpenService extends Service{
         Toast.makeText(this,"Service is stopped" ,Toast.LENGTH_LONG).show();
         isRunning = false;
     }
-    public static String getCurrentSsid(Context context) {
-        String ssid = null;
-        ConnectivityManager connManager = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
-        NetworkInfo networkInfo = connManager.getNetworkInfo(ConnectivityManager.TYPE_WIFI);
-        if (networkInfo.isConnected()) {
-            final WifiManager wifiManager = (WifiManager) context.getSystemService(Context.WIFI_SERVICE);
-            final WifiInfo connectionInfo = wifiManager.getConnectionInfo();
-            if (connectionInfo != null && !TextUtils.isEmpty(connectionInfo.getSSID())) {
-                ssid = connectionInfo.getSSID();
-            }
-        }
-        return ssid;
-    }
+
 }

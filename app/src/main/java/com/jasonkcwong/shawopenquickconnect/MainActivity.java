@@ -84,13 +84,13 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    public void startService(View v) {
+    public void startReceiver(View v) {
         if (emailEditText.getText().toString().matches("") || passEditText.getText().toString().matches("")){
             Toast.makeText(this, "Cannot start service due to missing fields", Toast.LENGTH_LONG).show();
         } else {
             if (!isStarted){
                 hideSoftKeyboard(MainActivity.this);
-                Intent i = new Intent(this, ShawOpenService.class);
+                Intent i = new Intent(this, Receiver.class);
                 Bundle extras = new Bundle();
                 String email = emailEditText.getText().toString();
                 String pass = passEditText.getText().toString();
@@ -99,7 +99,8 @@ public class MainActivity extends AppCompatActivity {
                 extras.putString("pass", pass);
                 i.putExtras(extras);
 
-                startService(i);
+                sendBroadcast(i);
+
                 isStarted = true;
             }
 

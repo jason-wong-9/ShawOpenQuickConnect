@@ -21,6 +21,11 @@
         </activity>
         <service android:name=".ShawOpenService"
             android:exported="false" />
+        <receiver android:name=".Receiver">
+            <intent-filter>
+               <action android:name="android.intent.action.AIRPLANE_MODE"/>
+            </intent-filter>
+        </receiver>
     </application>
 
 </manifest>

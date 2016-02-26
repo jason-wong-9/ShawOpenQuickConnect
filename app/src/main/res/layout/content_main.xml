@@ -36,10 +36,10 @@
     <Button
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Start Service"
+        android:text="Start Receiver"
         android:id="@+id/button"
         android:layout_below="@+id/passEditText"
         android:layout_centerHorizontal="true"
         android:layout_marginTop="20dp"
-        android:onClick="startService" />
+        android:onClick="startReceiver" />
 </RelativeLayout>
